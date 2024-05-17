@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solicitudes</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    /* Estilos adicionales para fijar el sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 1000; /* Asegura que esté por encima del contenido */
+      width: 250px; /* Ancho del sidebar */
+      padding: 20px;
+      overflow-y: auto; /* Agrega un desplazamiento si el contenido es más largo que el sidebar */
+      background-color: #343a40; /* Color de fondo del sidebar */
+      color: white; /* Color de texto del sidebar */
+      transition: all 0.3s ease; /* Agrega una transición suave */
+    }
+    /* Ajusta el contenido principal para dar espacio al sidebar */
+    main {
+      margin-left: 250px; /* Ajusta este valor según el ancho del sidebar */
+      padding: 20px; /* Agrega espacio alrededor del contenido principal */
+      transition: all 0.3s ease; /* Agrega una transición suave */
+    }
+    /* Estilos para el botón de menú (hamburguesa) */
+    .menu-toggle {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1100; /* Asegura que esté por encima del sidebar */
+      color: rgb(7, 6, 6);
+      cursor: pointer;
+      font-size: 1.5rem; /* Tamaño de fuente más grande */
+    }
+    /* Centrar el texto en la pantalla */
+    .centered-text {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    .flex-column{
+        margin-left: 0.5em;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Botón de menú (hamburguesa) -->
+      <div class="menu-toggle" id="menuToggle">&#9776;</div>
+      <!-- Sidebar -->
+      <nav id="sidebar" class="col-md-3 bg-dark sidebar">
+        <div class="sidebar-sticky">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">Inicio</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="formulario.html">Formulario</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="solicitudes.html">Solicitudes</a>
+            </li>
+            <!-- Agrega más elementos de menú aquí si es necesario -->
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Contenido principal -->
+      <main role="main" class="col-md-9 ml-sm-auto col-lg-9 px-4">
+        <!-- Controles de filtro -->
+        <div class="row">
+          <div class="col-md-3">
+            <label>Filtrar por estado:</label>
+            <select id="filtroEstado">
+              <option value="todos">Todos</option>
+              <option value="pendiente">Pendientes</option>
+              <option value="finalizado">Finalizados</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label>Filtrar por responsable:</label>
+            <select id="filtroResponsable">
+              <option value="todos">Todos</option>
+              <!-- Aquí puedes agregar opciones para cada persona responsable -->
+            </select>
+          </div>
+        </div>
+        <!-- Contenido de ejemplo -->
+        <div id="solicitudes">
+          <h2>Solicitudes</h2>
+          <div class="row" id="solicitudes-lista">
+            <!-- Aquí se cargarán las tarjetas de solicitudes -->
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts de Bootstrap y JavaScript -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Agrega el script de SweetAlert -->
+  <script src="js/solicitudes.js"></script>
+</body>
+</html>

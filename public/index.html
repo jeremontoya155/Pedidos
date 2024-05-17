@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentación</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="styles.css"> <!-- Agrega tus estilos personalizados aquí si es necesario -->
+  <style>
+    /* Estilos adicionales para fijar el sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 1000; /* Asegura que esté por encima del contenido */
+      width: 250px; /* Ancho del sidebar */
+      padding: 20px;
+      overflow-y: auto; /* Agrega un desplazamiento si el contenido es más largo que el sidebar */
+      background-color: #343a40; /* Color de fondo del sidebar */
+      color: white; /* Color de texto del sidebar */
+      transition: all 0.3s ease; /* Agrega una transición suave */
+    }
+    /* Ajusta el contenido principal para dar espacio al sidebar */
+    main {
+      margin-left: 250px; /* Ajusta este valor según el ancho del sidebar */
+      padding: 20px; /* Agrega espacio alrededor del contenido principal */
+      transition: all 0.3s ease; /* Agrega una transición suave */
+    }
+    /* Estilos para el botón de menú (hamburguesa) */
+    .menu-toggle {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1100; /* Asegura que esté por encima del sidebar */
+      color: rgb(7, 6, 6);
+      cursor: pointer;
+      font-size: 1.5rem; /* Tamaño de fuente más grande */
+    }
+    /* Centrar el texto en la pantalla */
+    .centered-text {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    .flex-column{
+        margin-left: 0.5em;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Botón de menú (hamburguesa) -->
+      <div class="menu-toggle" id="menuToggle">&#9776;</div>
+      <!-- Sidebar -->
+      <nav id="sidebar" class="col-md-3 bg-dark sidebar">
+        <div class="sidebar-sticky">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link" href="#section1">Sección 1</a>
+              <ul class="nav flex-column">
+                <li class="nav-item">
+                  <a class="nav-link" href="#sub-section1">Subsección 1</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#sub-section2">Subsección 2</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#section2">Sección 2</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="formulario.html">Formulario</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="solicitudes.html">Solicitudes</a>
+              </li>
+            <!-- Agrega más elementos de menú aquí si es necesario -->
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Contenido principal -->
+      <main role="main" class="col-md-9 ml-sm-auto col-lg-9 px-4">
+        <!-- Contenido de ejemplo -->
+        <div id="section1">
+          <h2>Sección 1</h2>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </div>
+        <div id="sub-section1">
+          <h3>Subsección 1</h3>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </div>
+        <div id="sub-section2">
+          <h3>Subsección 2</h3>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </div>
+        <div id="section2">
+          <h2>Sección 2</h2>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </div>
+        <!-- Formulario -->
+        <div id="formulario" style="display:none;">
+          <h2>Formulario</h2>
+          <form>
+            <!-- Agrega los campos del formulario aquí -->
+            <button type="submit" class="btn btn-primary">Enviar</button>
+          </form>
+        </div>
+        <!-- Agrega más secciones y contenido aquí si es necesario -->
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts de Bootstrap y JavaScript -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    // Script para controlar la visibilidad del sidebar y el formulario
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const formulario = document.getElementById('formulario');
+
+    menuToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('d-none'); // Oculta o muestra el sidebar
+      formulario.classList.toggle('d-none'); // Oculta o muestra el formulario
+    });
+  </script>
+</body>
+</html>

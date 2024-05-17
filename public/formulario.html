@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentación</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/form.css"> <!-- Agrega tus estilos personalizados aquí si es necesario -->
+
+  <style>
+
+  </style>
+</head>
+<body>
+
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Botón de menú (hamburguesa) -->
+      <div class="menu-toggle" id="menuToggle">&#9776;</div>
+      <!-- Sidebar -->
+      <nav id="sidebar" class="col-md-3 bg-dark sidebar">
+        <div class="sidebar-sticky">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">Inicio</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="formulario.html">Formulario</a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link" href="solicitudes.html">Solicitudes</a>
+              </li>
+            <!-- Agrega más elementos de menú aquí si es necesario -->
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Contenido principal -->
+      <main role="main" class="col-md-9 ml-sm-auto col-lg-9 px-4">
+        <!-- Contenido de ejemplo -->
+      
+        <!-- Formulario -->
+        <div id="formulario" >
+          <h2>Formulario</h2>
+          <form id="miFormulario">
+            <div class="form-group">
+              <label for="nombre_persona">Nombre de la persona:</label>
+              <input type="text" class="form-control" id="nombre_persona" name="nombre_persona">
+            </div>
+            <div class="form-group">
+              <label for="nombre_solicitud">Nombre de la solicitud:</label>
+              <input type="text" class="form-control" id="nombre_solicitud" name="nombre_solicitud">
+          </div>
+          <div class="form-group">
+              <label for="descripcion_solicitud">Descripción de la solicitud:</label>
+              <textarea class="form-control" id="descripcion_solicitud" name="descripcion_solicitud" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+              <label for="periodo_tiempo">Periodo de tiempo:</label>
+              <input type="text" class="form-control" id="periodo_tiempo" name="periodo_tiempo">
+          </div>
+          <div class="form-group">
+              <label for="mail_asociado">Mail Asociado:</label>
+              <input type="email" class="form-control" id="mail_asociado" name="mail_asociado">
+          </div>
+          <div class="form-group">
+              <label for="persona_encargada">Persona encargada:</label>
+              <select class="form-control" id="persona_encargada" name="persona_encargada">
+                  <option value="Jeremias">Jeremias</option>
+                  <option value="Jordi">Jordi</option>
+                  <option value="Nahuel_R">Nahuel R</option>
+                  <option value="Nahuel_M">Nahuel M</option>
+              </select>
+          </div>
+          
+            <!-- Agregar los demás campos del formulario aquí -->
+            <button type="submit" class="btn btn-primary">Enviar</button>
+          </form>
+        </div>
+        <!-- Agrega más secciones y contenido aquí si es necesario -->
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts de Bootstrap y JavaScript -->
+  
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Agrega el script de SweetAlert -->
+  <script src="js/form.js"></script>
+</body>
+</html>
