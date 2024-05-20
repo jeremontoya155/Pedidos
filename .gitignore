@@ -1,1 +1,4 @@
 node_modules
+usuarios.db
+initialize_db.js
+initialize_user.js
