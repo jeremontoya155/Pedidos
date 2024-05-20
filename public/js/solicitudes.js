@@ -4,11 +4,28 @@ document.addEventListener('DOMContentLoaded', () => {
         // Obtiene los valores seleccionados de los controles de filtro
         const estado = document.getElementById('filtroEstado').value;
         const responsable = document.getElementById('filtroResponsable').value;
+        const fechaInicio = document.getElementById('filtroFechaInicio').value;
+        const fechaFin = document.getElementById('filtroFechaFin').value;
 
         // Construye la URL de la solicitud GET con los filtros aplicados
         let url = '/solicitudes';
-        if (estado !== 'todos' || responsable !== 'todos') {
-            url += `?estado=${estado}&responsable=${responsable}`;
+        const params = new URLSearchParams();
+
+        if (estado !== 'todos') {
+            params.append('estado', estado);
+        }
+        if (responsable !== 'todos') {
+            params.append('responsable', responsable);
+        }
+        if (fechaInicio) {
+            params.append('fechaInicio', fechaInicio);
+        }
+        if (fechaFin) {
+            params.append('fechaFin', fechaFin);
+        }
+
+        if (params.toString()) {
+            url += `?${params.toString()}`;
         }
 
         try {
@@ -27,6 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Agregar event listeners para los controles de selección de filtro
     document.getElementById('filtroEstado').addEventListener('change', cargarTodasLasSolicitudes);
     document.getElementById('filtroResponsable').addEventListener('change', cargarTodasLasSolicitudes);
+    document.getElementById('filtroFechaInicio').addEventListener('change', cargarTodasLasSolicitudes);
+    document.getElementById('filtroFechaFin').addEventListener('change', cargarTodasLasSolicitudes);
 
     // Función para mostrar las solicitudes en la página
     const mostrarSolicitudes = (solicitudes) => {
@@ -34,6 +53,9 @@ document.addEventListener('DOMContentLoaded', () => {
         listaSolicitudes.innerHTML = ''; // Limpiar contenido anterior
 
         solicitudes.forEach((solicitud) => {
+            const estadoTexto = solicitud.finalizado === 0 ? 'Pendiente' :
+                                solicitud.finalizado === 1 ? 'En Curso' : 'Finalizado';
+
             const solicitudCard = `
                 <div class="col-md-4">
                     <div class="card mb-4 shadow-sm">
@@ -43,10 +65,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             <p class="card-text">Periodo: ${solicitud.periodo_tiempo}</p>
                             <p class="card-text">Mail asociado: ${solicitud.mail_asociado}</p>
                             <p class="card-text">Persona encargada: ${solicitud.persona_encargada}</p>
+                            <p class="card-text">Fecha: ${solicitud.fecha}</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-sm btn-outline-secondary toggle-btn" data-id="${solicitud.id}">
-                                        ${solicitud.finalizado ? 'Finalizado' : 'Pendiente'}
+                                        ${estadoTexto}
                                     </button>
                                     <button type="button" class="btn btn-sm btn-outline-secondary editar-btn" data-id="${solicitud.id}" data-toggle="modal" data-target="#editarModal">
                                         Editar

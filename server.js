@@ -1,6 +1,7 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt');
 const path = require('path');
 
 const app = express();
@@ -36,33 +37,45 @@ app.post('/enviar-formulario', (req, res) => {
 // Endpoint para obtener todas las solicitudes con filtros aplicados
 app.get('/solicitudes', (req, res) => {
   let sql = `SELECT * FROM solicitudes`;
+  const params = [];
 
-  const { estado, responsable } = req.query;
+  const { estado, responsable, fechaInicio, fechaFin } = req.query;
+  const filters = [];
 
-  // Verificar si se proporcionó el parámetro de estado y ajustar la consulta SQL en consecuencia
   if (estado === 'pendiente') {
-    sql += ` WHERE finalizado = 0`;
+    filters.push(`finalizado = 0`);
+  } else if (estado === 'curso') {
+    filters.push(`finalizado = 1`);
   } else if (estado === 'finalizado') {
-    sql += ` WHERE finalizado = 1`;
+    filters.push(`finalizado = 2`);
   }
-
-  // Verificar si se proporcionó el parámetro de responsable y ajustar la consulta SQL en consecuencia
+  
   if (responsable && responsable !== 'todos') {
-    sql += ` AND persona_encargada = ?`;
+    filters.push(`persona_encargada = ?`);
+    params.push(responsable);
   }
 
-  // Ejecutar la consulta SQL con los parámetros apropiados
-  const params = responsable && responsable !== 'todos' ? [responsable] : [];
+  if (fechaInicio) {
+    filters.push(`fecha >= ?`);
+    params.push(fechaInicio);
+  }
+
+  if (fechaFin) {
+    filters.push(`fecha <= ?`);
+    params.push(fechaFin);
+  }
+
+  if (filters.length > 0) {
+    sql += ` WHERE ` + filters.join(' AND ');
+  }
 
   db.all(sql, params, (err, rows) => {
     if (err) {
-      console.error('Error al obtener las solicitudes:', err);
-      return res.status(500).json({ error: 'Error interno del servidor.' });
+      return res.status(500).json({ error: 'Error al obtener las solicitudes.' });
     }
-    res.status(200).json(rows);
+    res.json(rows);
   });
 });
-
 
 // Endpoint para editar una solicitud existente
 app.put('/editar-solicitud/:id', (req, res) => {
@@ -104,7 +117,7 @@ app.put('/toggle-finalizado/:id', (req, res) => {
     }
 
     // Cambiar el estado de la solicitud
-    const nuevoEstado = !row.finalizado; // Cambiar el estado actual
+    const nuevoEstado = (row.finalizado + 1) % 3; // Alternar entre 0, 1 y 2
     const sqlUpdate = `UPDATE solicitudes SET finalizado = ? WHERE id = ?`;
     db.run(sqlUpdate, [nuevoEstado, id], (err) => {
       if (err) {
@@ -117,7 +130,7 @@ app.put('/toggle-finalizado/:id', (req, res) => {
 
 // Endpoint para obtener solicitudes completadas
 app.get('/solicitudes-completadas', (req, res) => {
-  const sql = `SELECT * FROM solicitudes WHERE finalizado=1 `;
+  const sql = `SELECT * FROM solicitudes WHERE finalizado = 2`;
 
   db.all(sql, [], (err, rows) => {
     if (err) {
@@ -126,6 +139,28 @@ app.get('/solicitudes-completadas', (req, res) => {
     res.status(200).json(rows);
   });
 });
+
+
+// Endpoint para manejar el inicio de sesión
+app.post('/login', (req, res) => {
+  let redirectPage;
+  const { username, password } = req.body;
+  
+  db.get("SELECT * FROM usuarios WHERE usuario = ? AND contraseña = ?", [username, password], (err, row) => {
+      if (err) {
+          res.status(500).json({ success: false, message: "Internal server error" });
+      } else if (row) {
+          redirectPage = 'formulario.html'; // Por defecto redirige a formulario.html
+          if (row.rol === 'administrador') { // Aquí se cambia de 'usaurio' a 'rol'
+               redirectPage = 'solicitudes.html'; // Si es administrador, redirige a solicitud.html
+          }
+          res.json({ success: true, message: "Login successful", redirect: redirectPage });
+      } else {
+          res.json({ success: false, message: "Invalid username or password" });
+      }
+  });
+});
+
 
 // Iniciar el servidor
 app.listen(PORT, () => {

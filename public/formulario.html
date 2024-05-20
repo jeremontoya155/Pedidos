@@ -24,13 +24,11 @@
             <li class="nav-item">
               <a class="nav-link" href="index.html">Inicio</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="formulario.html">Formulario</a>
-              </li>
-
+            
               <li class="nav-item">
-                <a class="nav-link" href="solicitudes.html">Solicitudes</a>
+                <a class="nav-link" href="usuarios.html">Usuarios</a>
               </li>
+            
             <!-- Agrega más elementos de menú aquí si es necesario -->
           </ul>
         </div>
@@ -49,16 +47,43 @@
               <input type="text" class="form-control" id="nombre_persona" name="nombre_persona">
             </div>
             <div class="form-group">
-              <label for="nombre_solicitud">Nombre de la solicitud:</label>
-              <input type="text" class="form-control" id="nombre_solicitud" name="nombre_solicitud">
+              <label for="nombre_solicitud">Area de la solicitud:</label>
+              
+              <select class="form-control" type="text" id="nombre_solicitud" name="nombre_solicitud">
+                <option value="Cajas">Cajas</option>
+                <option value="Compras">Compras</option>
+                <option value="Supervisores">Supervisores</option>
+                <option value="RRHH">RRHH</option>
+                <option value="Obras Sociales">Obras Sociales</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Gerencia">Gerencia</option>
+            </select>
           </div>
           <div class="form-group">
               <label for="descripcion_solicitud">Descripción de la solicitud:</label>
-              <textarea class="form-control" id="descripcion_solicitud" name="descripcion_solicitud" rows="3"></textarea>
+              
+              <textarea id="descripcion_solicitud"  name="descripcion_solicitud" rows="6" class="form-control" onfocus="mostrarPreguntas()" onblur="ocultarPreguntas()"></textarea>
+
+              <div id="preguntas" style="display: none;">
+                <p><Strong>Posibles preguntas para ayudarte a describir tu problema:</Strong></p>
+                <ul>
+                  <li>¿<strong>Qué</strong> problema específico estás experimentando? Describe los detalles</li>
+                  <li>¿<strong>Cuándo</strong>  comenzó el problema y qué impacto está teniendo?</li>
+                  <li>¿Has tomado alguna <Strong>medida</Strong> para solucionar el problema? Si es así, ¿cuáles fueron los resultados?</li>
+                </ul>
+              </div>
+
           </div>
           <div class="form-group">
               <label for="periodo_tiempo">Periodo de tiempo:</label>
-              <input type="text" class="form-control" id="periodo_tiempo" name="periodo_tiempo">
+              <select type="text" class="form-control" id="periodo_tiempo" name="periodo_tiempo">
+                
+                <option value="4 dias">4 Dias</option>
+                <option value="Una Semana">1 Semana</option>
+                <option value="Dos Semanas">2 Semanas</option>
+                <option value="3 Semanas">3 Semanas</option>
+                
+            </select>
           </div>
           <div class="form-group">
               <label for="mail_asociado">Mail Asociado:</label>
@@ -90,5 +115,15 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Agrega el script de SweetAlert -->
   <script src="js/form.js"></script>
+
+  <script>
+    function mostrarPreguntas() {
+  document.getElementById('preguntas').style.display = 'block';
+}
+function ocultarPreguntas() {
+  document.getElementById('preguntas').style.display = 'none';
+}
+
+  </script>
 </body>
 </html>

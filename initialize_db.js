@@ -13,7 +13,8 @@ db.serialize(() => {
     periodo_tiempo TEXT,
     mail_asociado TEXT,
     persona_encargada TEXT,
-    finalizado INTEGER DEFAULT 0 -- Agregar el campo 'finalizado' con valor por defecto 0 (false)
+    finalizado INTEGER DEFAULT 0, -- Agregar el campo 'finalizado' con valor por defecto 0 (false)
+    fecha DATE DEFAULT (DATE('now')) -- Agregar el campo 'fecha' con valor por defecto la fecha actual
   )`);
 
   // Insertar algunos datos de ejemplo
