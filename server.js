@@ -4,9 +4,10 @@ const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const path = require('path');
 const cookieParser = require('cookie-parser'); // Agregar cookie-parser
+require('dotenv').config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000; // Usar el puerto de la variable de entorno o 3000 por defecto
 
 // Crear o abrir la base de datos
 const dbPath = path.resolve(__dirname, 'formulario.db');
