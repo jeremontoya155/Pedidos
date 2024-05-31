@@ -3,6 +3,7 @@ const sqlite3 = require('sqlite3').verbose();
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const path = require('path');
+const cookieParser = require('cookie-parser'); // Agregar cookie-parser
 
 const app = express();
 const PORT = 3000;
@@ -13,6 +14,8 @@ const db = new sqlite3.Database(dbPath);
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
+app.use(cookieParser()); // Usar cookie-parser
+
 
 // Endpoint para manejar la solicitud de envío del formulario
 app.post('/enviar-formulario', (req, res) => {
@@ -33,6 +36,10 @@ app.post('/enviar-formulario', (req, res) => {
     res.status(200).json({ message: 'Solicitud enviada correctamente.' });
   });
 });
+
+
+
+
 
 // Endpoint para obtener todas las solicitudes con filtros aplicados
 app.get('/solicitudes', (req, res) => {
@@ -128,6 +135,56 @@ app.put('/toggle-finalizado/:id', (req, res) => {
   });
 });
 
+// Endpoint para cambiar la persona encargada de una solicitud
+// Ruta para cambiar la persona encargada de una solicitud
+app.put('/cambiar-persona-encargada/:id', (req, res) => {
+  const idSolicitud = req.params.id;
+  const nuevaPersonaEncargada = req.body.nuevaPersonaEncargada;
+
+  // Abrir la base de datos
+  const db = new sqlite3.Database('formulario.db');
+
+  // Actualizar la persona encargada de la solicitud en la base de datos
+  db.run('UPDATE solicitudes SET persona_encargada = ? WHERE id = ?', [nuevaPersonaEncargada, idSolicitud], (err) => {
+      // Cerrar la conexión a la base de datos
+      db.close();
+
+      if (err) {
+          console.error('Error al cambiar la persona encargada:', err);
+          res.status(500).send('Error al cambiar la persona encargada de la solicitud');
+      } else {
+          res.status(200).send('Persona encargada cambiada exitosamente');
+      }
+  });
+});
+
+
+app.get('/attentions', (req, res) => {
+  const sql = 'SELECT persona_encargada, COUNT(*) as atenciones FROM solicitudes GROUP BY persona_encargada';
+  db.all(sql, [], (err, rows) => {
+      if (err) {
+          console.error('Error al obtener los datos de atenciones:', err.message);
+          return res.status(500).json({ error: 'Error interno del servidor' });
+      }
+      console.log('Datos de atenciones obtenidos:', rows);
+      res.json(rows);
+  });
+});
+
+app.get('/requests', (req, res) => {
+  const sql = 'SELECT finalizado, COUNT(*) as solicitudes FROM solicitudes GROUP BY finalizado';
+  db.all(sql, [], (err, rows) => {
+      if (err) {
+          console.error('Error al obtener los datos de solicitudes:', err.message);
+          return res.status(500).json({ error: 'Error interno del servidor' });
+      }
+      console.log('Datos de solicitudes obtenidos:', rows);
+      res.json(rows);
+  });
+});
+
+
+
 // Endpoint para obtener solicitudes completadas
 app.get('/solicitudes-completadas', (req, res) => {
   const sql = `SELECT * FROM solicitudes WHERE finalizado = 2`;
@@ -141,23 +198,85 @@ app.get('/solicitudes-completadas', (req, res) => {
 });
 
 
-// Endpoint para manejar el inicio de sesión
-app.post('/login', (req, res) => {
-  let redirectPage;
-  const { username, password } = req.body;
+// Endpoint para obtener el nombre de usuario
+// Función para generar un ID de sesión único
+function generateSessionId() {
+  // Generar un ID de sesión aleatorio utilizando una combinación de caracteres alfanuméricos aleatorios
+  const sessionIdLength = 20; // Longitud del ID de sesión
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'; // Caracteres permitidos
+  let sessionId = ''; // ID de sesión generado
   
-  db.get("SELECT * FROM usuarios WHERE usuario = ? AND contraseña = ?", [username, password], (err, row) => {
-      if (err) {
-          res.status(500).json({ success: false, message: "Internal server error" });
-      } else if (row) {
-          redirectPage = 'formulario.html'; // Por defecto redirige a formulario.html
-          if (row.rol === 'administrador') { // Aquí se cambia de 'usaurio' a 'rol'
-               redirectPage = 'solicitudes.html'; // Si es administrador, redirige a solicitud.html
-          }
-          res.json({ success: true, message: "Login successful", redirect: redirectPage });
+  for (let i = 0; i < sessionIdLength; i++) {
+    sessionId += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  
+  return sessionId;
+}
+
+// Función para guardar el ID de sesión en la base de datos
+function saveSessionInDatabase(sessionId, userId) {
+  // Insertar el ID de sesión y el ID del usuario en la tabla de sesiones
+  const sql = `INSERT INTO sesiones (id_sesion, id_usuario) VALUES (?, ?)`;
+  db.run(sql, [sessionId, userId], function(err) {
+    if (err) {
+      console.error('Error al guardar la sesión en la base de datos:', err);
+    } else {
+      console.log('Sesión guardada en la base de datos correctamente.');
+    }
+  });
+}
+
+// Endpoint para obtener el nombre de usuario asociado a la sesión actual
+app.get('/username', (req, res) => {
+  const sessionId = req.cookies.sessionId;
+
+  // Consultar la base de datos para obtener el nombre de usuario asociado al ID de sesión
+  db.get("SELECT usuario FROM usuarios WHERE id = (SELECT id_usuario FROM sesiones WHERE id_sesion = ?)", [sessionId], (err, row) => {
+    if (err) {
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+    
+    if (!row) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    
+    // Si se encuentra el nombre de usuario, devolverlo en la respuesta
+    res.json({ username: row.usuario });
+  });
+});
+
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+
+  // Verificar si el usuario existe en la base de datos
+  const sql = 'SELECT * FROM usuarios WHERE usuario = ?';
+  db.get(sql, [username], (err, user) => {
+    if (err) {
+      return res.status(500).json({ error: 'Error interno del servidor' });
+    }
+
+    if (!user) {
+      return res.status(401).json({ error: 'Credenciales inválidas' });
+    }
+
+    // Comparar la contraseña proporcionada con la contraseña almacenada en la base de datos
+    if (password === user.contraseña) {
+      // Generar un ID de sesión único
+      const sessionId = generateSessionId();
+      // Guardar el ID de sesión en la base de datos
+      saveSessionInDatabase(sessionId, user.id);
+      // Establecer una cookie con el ID de sesión
+      res.cookie('sessionId', sessionId, { httpOnly: true });
+
+      // Redirigir según el rol del usuario
+      if (user.usuario === 'admin') {
+        res.json({ redirect: 'solicitudes.html' });
       } else {
-          res.json({ success: false, message: "Invalid username or password" });
+        res.json({ redirect: 'formulario.html' }); // Cambiar a la página que corresponda para otros usuarios
       }
+    } else {
+      res.status(401).json({ error: 'Credenciales inválidas' });
+    }
   });
 });
 

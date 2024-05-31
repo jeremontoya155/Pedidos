@@ -37,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
             mostrarSolicitudes(solicitudes);
         } catch (error) {
             console.error('Error:', error);
-            // Aquí puedes mostrar un mensaje de error al usuario si lo deseas
         }
     };
 
@@ -56,6 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const estadoTexto = solicitud.finalizado === 0 ? 'Pendiente' :
                                 solicitud.finalizado === 1 ? 'En Curso' : 'Finalizado';
 
+            // Determinar la clase de Bootstrap según el estado
+            const estadoClase = estadoTexto === 'Pendiente' ? 'btn-warning' :
+                                estadoTexto === 'En Curso' ? 'btn-primary' : 'btn-success';
+
             const solicitudCard = `
                 <div class="col-md-4">
                     <div class="card mb-4 shadow-sm">
@@ -64,17 +67,29 @@ document.addEventListener('DOMContentLoaded', () => {
                             <p class="card-text">${solicitud.descripcion_solicitud}</p>
                             <p class="card-text">Periodo: ${solicitud.periodo_tiempo}</p>
                             <p class="card-text">Mail asociado: ${solicitud.mail_asociado}</p>
-                            <p class="card-text">Persona encargada: ${solicitud.persona_encargada}</p>
+                            <p class="card-text">Persona encargada: <span id="persona-encargada-${solicitud.id}">${solicitud.persona_encargada}</span></p>
                             <p class="card-text">Fecha: ${solicitud.fecha}</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary toggle-btn" data-id="${solicitud.id}">
+                                    <button type="button" class="btn btn-sm ${estadoClase} toggle-btn" data-id="${solicitud.id}">
                                         ${estadoTexto}
                                     </button>
                                     <button type="button" class="btn btn-sm btn-outline-secondary editar-btn" data-id="${solicitud.id}" data-toggle="modal" data-target="#editarModal">
                                         Editar
                                     </button>
                                 </div>
+                            </div>
+                            <div class="mt-2">
+                                <label for="responsable-${solicitud.id}">Cambiar responsable:</label>
+                                <select id="responsable-${solicitud.id}" class="form-control">
+                                    <option value="Jeremias">Jeremias</option>
+                                    <option value="Nahuel M">Nahuel M</option>
+                                    <option value="Nahuel R">Nahuel R</option>
+                                    <option value="Jordi">Jordi</option>
+                                </select>
+                                <button type="button" class="btn btn-sm btn-outline-secondary cambiar-responsable-btn mt-2" data-id="${solicitud.id}">
+                                    Guardar
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -95,11 +110,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (!response.ok) {
                         throw new Error('Error al cambiar el estado de la solicitud');
                     }
-                    // Actualizar las solicitudes después de cambiar el estado
                     cargarTodasLasSolicitudes();
                 } catch (error) {
                     console.error('Error:', error);
-                    // Aquí puedes mostrar un mensaje de error al usuario si lo deseas
                 }
             });
         });
@@ -112,6 +125,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 const nuevaDescripcion = prompt("Introduce la nueva descripción:");
                 if (nuevaDescripcion !== null && nuevaDescripcion !== "") {
                     editarSolicitud(solicitudId, nuevaDescripcion);
+                }
+            });
+        });
+
+        // Agregar event listener para los botones de cambiar responsable
+        document.querySelectorAll('.cambiar-responsable-btn').forEach((btn) => {
+            btn.addEventListener('click', async () => {
+                const solicitudId = btn.dataset.id;
+                const select = document.getElementById(`responsable-${solicitudId}`);
+                const nuevaPersonaEncargada = select.value;
+                try {
+                    const response = await fetch(`/cambiar-persona-encargada/${solicitudId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ nuevaPersonaEncargada })
+                    });
+                    if (!response.ok) {
+                        throw new Error('Error al cambiar la persona encargada de la solicitud');
+                    }
+                    document.getElementById(`persona-encargada-${solicitudId}`).innerText = nuevaPersonaEncargada;
+                } catch (error) {
+                    console.error('Error:', error);
                 }
             });
         });
@@ -130,11 +165,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) {
                 throw new Error('Error al editar la solicitud');
             }
-            // Actualizar las solicitudes después de editar
             cargarTodasLasSolicitudes();
         } catch (error) {
             console.error('Error:', error);
-            // Aquí puedes mostrar un mensaje de error al usuario si lo deseas
             alert('Error al editar la solicitud. Por favor, inténtalo de nuevo más tarde.');
         }
     };

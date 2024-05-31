@@ -28,6 +28,13 @@
               <li class="nav-item">
                 <a class="nav-link" href="usuarios.html">Usuarios</a>
               </li>
+              <li class="nav-item">
+                <!-- Icono de usuario -->
+                <span class="nav-link">
+                  <i class="fas fa-user"></i> <!-- Icono de usuario -->
+                  <span id="username"></span> <!-- Nombre de usuario -->
+                </span>
+              </li>
             
             <!-- Agrega más elementos de menú aquí si es necesario -->
           </ul>
@@ -117,12 +124,56 @@
   <script src="js/form.js"></script>
 
   <script>
+
+
     function mostrarPreguntas() {
   document.getElementById('preguntas').style.display = 'block';
 }
 function ocultarPreguntas() {
   document.getElementById('preguntas').style.display = 'none';
 }
+
+
+
+
+  </script>
+
+  
+<!-- Script de jQuery (necesario para algunas funcionalidades de Bootstrap) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+<!-- Script de Popper.js (necesario para algunas funcionalidades de Bootstrap) -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+
+<!-- Script de Font Awesome -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+
+  <script>
+    // Cuando el DOM esté completamente cargado
+document.addEventListener('DOMContentLoaded', function() {
+    // Hacer una solicitud para obtener el nombre de usuario
+    fetch('/username')
+        .then(response => {
+            // Verificar si la respuesta es exitosa
+            if (!response.ok) {
+                throw new Error('No se pudo obtener el nombre de usuario');
+            }
+            // Convertir la respuesta a JSON
+            return response.json();
+        })
+        .then(data => {
+            // Actualizar el contenido de la página con el nombre de usuario obtenido
+            const usernameElement = document.getElementById('username');
+            if (usernameElement) {
+                usernameElement.textContent = data.username;
+            }
+        })
+        .catch(error => {
+            // Manejar cualquier error que ocurra durante la solicitud
+            console.error('Error:', error);
+        });
+});
 
   </script>
 </body>

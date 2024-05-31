@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js para los gráficos -->
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Botón de menú (hamburguesa) -->
+      <div class="menu-toggle" id="menuToggle">&#9776;</div>
+      <!-- Sidebar -->
+      <nav id="sidebar" class="col-md-3 bg-dark sidebar">
+        <div class="sidebar-sticky">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">Inicio</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="usuarios.html">Usuarios</a>
+            </li>
+            <li class="nav-item">
+              <!-- Icono de usuario -->
+              <span class="nav-link">
+                <i class="fas fa-user"></i> <!-- Icono de usuario -->
+                <span id="username"></span> <!-- Nombre de usuario -->
+              </span>
+            </li>
+            <!-- Agrega más elementos de menú aquí si es necesario -->
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Contenido principal -->
+      <main class="col-md-9 ml-sm-auto col-lg-10 px-4">
+        <h2 class="mb-4">Dashboard de Rendimiento</h2>
+        <!-- Filtros -->
+        <div class="row mb-4">
+          <div class="col-md-4">
+            <h3>Filtrar por Persona</h3>
+            <select id="filterByPerson" class="form-control">
+              <option value="Todos">Todos</option>
+              <option value="Jeremias">Jeremias</option>
+              <option value="Jordi">Jordi</option>
+              <option value="Nahuel_M">Nahuel M</option>
+              <option value="Nahuel_R">Nahuel R</option>
+              
+              
+              <!-- Agregar más opciones según sea necesario -->
+            </select>
+          </div>
+          <div class="col-md-4">
+            <h3>Filtrar por Fecha</h3>
+            <input type="date" id="filterByDate" class="form-control">
+        </div>
+          <div class="col-md-4">
+            <h3>Filtrar por Estado</h3>
+            <select id="filterByStatus" class="form-control">
+              <option value="-1">Todos</option>
+              <option value="0">Pendientes</option>
+              <option value="1">Curso</option>
+              <option value="2">Finalizado</option>
+              <!-- Agregar más opciones según sea necesario -->
+            </select>
+          </div>
+        </div>
+        <!-- Gráficos -->
+        <div class="row">
+          <div class="col-md-8 mb-4">
+            <h3 class="mb-3">Atenciones por Persona Encargada</h3>
+            <canvas id="attentionsChart"></canvas>
+          </div>
+          <div class="col-md-8 mb-4">
+            <h3 class="mb-3">Solicitudes por Área</h3>
+            <canvas id="requestsChart"></canvas>
+          </div>
+          <div class="col-md-8 mb-4">
+            <h3 class="mb-3">Atenciones por Persona a lo largo del Tiempo</h3>
+            <canvas id="attentionsOverTimeChart"></canvas>
+          </div>
+          <div class="col-md-8 mb-4">
+            <h3 class="mb-3">Solicitudes por Estado a lo largo del Tiempo</h3>
+            <canvas id="requestsByStatusOverTimeChart"></canvas>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

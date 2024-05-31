@@ -40,3 +40,19 @@
     .flex-column{
         margin-left: 0.5em;
     }
+
+    /* Estilos para los botones según su estado */
+.btn-pendiente {
+  background-color: yellow;
+  color: black;
+}
+
+.btn-curso {
+  background-color: violet;
+  color: white;
+}
+
+.btn-finalizado {
+  background-color: green;
+  color: white;
+}

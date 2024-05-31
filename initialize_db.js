@@ -1,3 +1,4 @@
+//solicitudes
 const sqlite3 = require('sqlite3').verbose();
 
 // Crear o abrir la base de datos

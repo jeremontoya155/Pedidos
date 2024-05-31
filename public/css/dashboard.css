@@ -1,0 +1,43 @@
+/* Estilos adicionales para fijar el sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 1000; /* Asegura que esté por encima del contenido */
+  width: 250px; /* Ancho del sidebar */
+  padding: 20px;
+  overflow-y: auto; /* Agrega un desplazamiento si el contenido es más largo que el sidebar */
+  background-color: #343a40; /* Color de fondo del sidebar */
+  color: white; /* Color de texto del sidebar */
+  transition: all 0.3s ease; /* Agrega una transición suave */
+}
+/* Ajusta el contenido principal para dar espacio al sidebar */
+main {
+  margin-left: 250px; /* Ajusta este valor según el ancho del sidebar */
+  padding: 20px; /* Agrega espacio alrededor del contenido principal */
+  transition: all 0.3s ease; /* Agrega una transición suave */
+}
+
+div canvas{
+  width: 100vw;
+  display: flex;
+  align-items: flex-end;
+  text-align: center;
+
+}
+
+
+.row{
+  justify-content: center;
+}
+/* Estilos para los gráficos */
+canvas {
+  display: flex;
+  align-items: flex-end;
+  max-width: 100vw; /* Establece el ancho máximo del canvas */
+  max-height: 300px; /* Establece la altura máxima del canvas */
+  width: 100vw; /* Ancho completo del contenedor */
+  height: auto; /* Altura automática para mantener la proporción */
+  margin-bottom: 20px; /* Agrega un espacio entre los gráficos */
+}

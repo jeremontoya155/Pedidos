@@ -25,7 +25,30 @@
             <li class="nav-item">
               <a class="nav-link" href="usuarios.html">Usuarios</a>
             </li>
+            <li class="nav-item">
+              <!-- Icono de usuario -->
+              <span class="nav-link">
+                <i class="fas fa-user"></i> <!-- Icono de usuario -->
+                <span id="username"></span> <!-- Nombre de usuario -->
+              </span>
+            </li>
             <!-- Agrega más elementos de menú aquí si es necesario -->
+          </ul>
+        </div>
+      </nav>
+
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">Inicio</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="usuarios.html">Usuarios</a>
+            </li>
           </ul>
         </div>
       </nav>
@@ -48,8 +71,8 @@
             <select id="filtroResponsable" class="form-control">
               <option value="todos">Todos</option>
               <option value="Jeremias">Jeremias</option>
-              <option value="Nahuel M">Nahuel M</option>
-              <option value="Nahuel R">Nahuel R</option>
+              <option value="Nahuel M">Nahuel_M</option>
+              <option value="Nahuel R">Nahuel_R</option>
               <option value="Jordi">Jordi</option>
             </select>
           </div>
@@ -79,5 +102,45 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Agrega el script de SweetAlert -->
   <script src="js/solicitudes.js"></script>
+  <!-- Scripts de Bootstrap -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Script de jQuery (necesario para algunas funcionalidades de Bootstrap) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+<!-- Script de Popper.js (necesario para algunas funcionalidades de Bootstrap) -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+
+<!-- Script de Font Awesome -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+
+  <script>
+    // Cuando el DOM esté completamente cargado
+document.addEventListener('DOMContentLoaded', function() {
+    // Hacer una solicitud para obtener el nombre de usuario
+    fetch('/username')
+        .then(response => {
+            // Verificar si la respuesta es exitosa
+            if (!response.ok) {
+                throw new Error('No se pudo obtener el nombre de usuario');
+            }
+            // Convertir la respuesta a JSON
+            return response.json();
+        })
+        .then(data => {
+            // Actualizar el contenido de la página con el nombre de usuario obtenido
+            const usernameElement = document.getElementById('username');
+            if (usernameElement) {
+                usernameElement.textContent = data.username;
+            }
+        })
+        .catch(error => {
+            // Manejar cualquier error que ocurra durante la solicitud
+            console.error('Error:', error);
+        });
+});
+
+  </script>
 </body>
 </html>
