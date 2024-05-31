@@ -69,7 +69,7 @@
   <section>
     <h2>Estructura del Proyecto</h2>
     <ul>
-      <li><strong>app.js</strong>: Archivo principal de la aplicación.</li>
+      <li><strong>server.js</strong>: Archivo principal de la aplicación.</li>
       <li><strong>public</strong>: Carpeta que contiene archivos estáticos como HTML, CSS y JavaScript.</li>
       <li><strong>routes</strong>: Carpeta que contiene archivos de rutas para manejar las solicitudes HTTP.</li>
       <li><strong>db</strong>: Carpeta que contiene la base de datos SQLite3.</li>
