@@ -84,8 +84,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             <select id="responsable-${solicitud.id}" class="form-control">
                                 <option value="" disabled selected>Seleccionar Responsable</option>
                                 <option value="Jeremias">Jeremias</option>
-                                <option value="Nahuel M">Nahuel M</option>
-                                <option value="Nahuel R">Nahuel R</option>
+                                <option value="Nahuel_M">Nahuel M</option>
+                                <option value="Nahuel_R">Nahuel R</option>
                                 <option value="Jordi">Jordi</option>
                             </select>
                                 <button type="button" class="btn btn-sm btn-outline-secondary cambiar-responsable-btn mt-2" data-id="${solicitud.id}">
@@ -154,24 +154,40 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Función para editar una solicitud existente
-    const editarSolicitud = async (solicitudId, nuevaDescripcion) => {
-        try {
-            const response = await fetch(`/editar-solicitud/${solicitudId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ nuevaDescripcion })
-            });
-            if (!response.ok) {
-                throw new Error('Error al editar la solicitud');
-            }
-            cargarTodasLasSolicitudes();
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Error al editar la solicitud. Por favor, inténtalo de nuevo más tarde.');
+   // Función para editar una solicitud existente
+   const editarSolicitud = async (solicitudId, nuevaDescripcion) => {
+    try {
+        // Hacer una solicitud para obtener la descripción actual de la solicitud
+        const response = await fetch(`/obtener-descripcion-solicitud/${solicitudId}`);
+        if (!response.ok) {
+            throw new Error('Error al obtener la descripción de la solicitud');
         }
-    };
+        const data = await response.json();
+        const descripcionActual = data.descripcion;
+
+        // Concatenar la nueva descripción a la existente
+        const descripcionCompleta = descripcionActual + '\n' + nuevaDescripcion;
+
+        // Hacer otra solicitud para guardar la descripción completa en la base de datos
+        const guardarResponse = await fetch(`/editar-solicitud/${solicitudId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ nuevaDescripcion: descripcionCompleta })
+        });
+        if (!guardarResponse.ok) {
+            throw new Error('Error al editar la solicitud');
+        }
+
+        // Recargar todas las solicitudes para actualizar la visualización
+        cargarTodasLasSolicitudes();
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al editar la solicitud. Por favor, inténtalo de nuevo más tarde.');
+    }
+};
+
 
     // Cargar todas las solicitudes al cargar la página
     cargarTodasLasSolicitudes();
