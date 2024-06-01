@@ -6,9 +6,9 @@
   <title>Solicitudes</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="css/solicitudes.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
 </head>
 <body>
-
   <div class="container-fluid">
     <div class="row">
       <!-- Botón de menú (hamburguesa) -->
@@ -20,11 +20,7 @@
             <li class="nav-item">
               <a class="nav-link" href="index.html">Inicio</a>
             </li>
-           
-          
-            <li class="nav-item">
-              <a class="nav-link" href="usuarios.html">Usuarios</a>
-            </li>
+         
             <li class="nav-item">
               <!-- Icono de usuario -->
               <span class="nav-link">
@@ -32,11 +28,13 @@
                 <span id="username"></span> <!-- Nombre de usuario -->
               </span>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="usuarios.html" style="color: brown;"><Strong>Cerrar Sesion</Strong></a>
+            </li>
             <!-- Agrega más elementos de menú aquí si es necesario -->
           </ul>
         </div>
       </nav>
-
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -50,10 +48,8 @@
               <a class="nav-link" href="usuarios.html">Usuarios</a>
             </li>
           </ul>
-          
         </div>
       </nav>
-
       <!-- Contenido principal -->
       <main role="main" class="col-md-9 ml-sm-auto col-lg-9 px-4">
         <!-- Controles de filtro -->
@@ -96,52 +92,39 @@
       </main>
     </div>
   </div>
-
-  <!-- Scripts de Bootstrap y JavaScript -->
+  <!-- Scripts de jQuery y Bootstrap -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Agrega el script de SweetAlert -->
   <script src="js/solicitudes.js"></script>
-  <!-- Scripts de Bootstrap -->
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-<!-- Script de jQuery (necesario para algunas funcionalidades de Bootstrap) -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-
-<!-- Script de Popper.js (necesario para algunas funcionalidades de Bootstrap) -->
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-
-<!-- Script de Font Awesome -->
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-
-
+  <!-- Script de Font Awesome -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" integrity="sha512-MX0xra9GauI6ND0e1JHSuPSz0YvHifMsYio/1tt/dFbjbXZwXjskzYfakOQa1kMllbffPeq2DfIdTckVmAJlKQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
     // Cuando el DOM esté completamente cargado
-document.addEventListener('DOMContentLoaded', function() {
-    // Hacer una solicitud para obtener el nombre de usuario
-    fetch('/username')
+    document.addEventListener('DOMContentLoaded', function() {
+      // Hacer una solicitud para obtener el nombre de usuario
+      fetch('/username')
         .then(response => {
-            // Verificar si la respuesta es exitosa
-            if (!response.ok) {
-                throw new Error('No se pudo obtener el nombre de usuario');
-            }
-            // Convertir la respuesta a JSON
-            return response.json();
+          // Verificar si la respuesta es exitosa
+          if (!response.ok) {
+            throw new Error('No se pudo obtener el nombre de usuario');
+          }
+          // Convertir la respuesta a JSON
+          return response.json();
         })
         .then(data => {
-            // Actualizar el contenido de la página con el nombre de usuario obtenido
-            const usernameElement = document.getElementById('username');
-            if (usernameElement) {
-                usernameElement.textContent = data.username;
-            }
+          // Actualizar el contenido de la página con el nombre de usuario obtenido
+          const usernameElement = document.getElementById('username');
+          if (usernameElement) {
+            usernameElement.textContent = data.username;
+          }
         })
         .catch(error => {
-            // Manejar cualquier error que ocurra durante la solicitud
-            console.error('Error:', error);
+          // Manejar cualquier error que ocurra durante la solicitud
+          console.error('Error:', error);
         });
-});
-
+    });
   </script>
 </body>
 </html>
