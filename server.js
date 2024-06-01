@@ -3,31 +3,56 @@ const sqlite3 = require('sqlite3').verbose();
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const path = require('path');
-const cookieParser = require('cookie-parser'); // Agregar cookie-parser
+const cookieParser = require('cookie-parser');
+const session = require('express-session'); // Agregar express-session
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 3000; // Usar el puerto de la variable de entorno o 3000 por defecto
+const PORT = process.env.PORT || 3000;
 
-// Crear o abrir la base de datos
 const dbPath = path.resolve(__dirname, 'formulario.db');
 const db = new sqlite3.Database(dbPath);
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
-app.use(cookieParser()); // Usar cookie-parser
+app.use(cookieParser());
+app.use(session({
+  secret: process.env.KEY, // Cambia esto por una clave secreta más segura
+  resave: false,
+  saveUninitialized: true,
+  cookie: { maxAge: 600000 } // La duración de la cookie, aquí es 10 minutos
+}));
 
+function isAuthenticated(req, res, next) {
+  if (req.session.user) {
+    return next();
+  }
+  res.redirect('/usuarios.html'); // Redirige a la página de login si no está autenticado
+}
+
+// Middleware para verificar si el usuario es administrador
+function isAdmin(req, res, next) {
+  if (req.session.user && req.session.user.role === 'admin') {
+    return next();
+  }
+  res.redirect('/'); // Redirige a la página de inicio si no es administrador
+}
+
+function isNotAdmin(req, res, next) {
+  if (req.session.user && req.session.user.role !== 'admin') {
+    return res.redirect('/index.html'); // Redirige a la página de inicio si no es administrador
+  }
+  next(); // Continuar con el siguiente middleware si el usuario es administrador
+}
 
 // Endpoint para manejar la solicitud de envío del formulario
-app.post('/enviar-formulario', (req, res) => {
+app.post('/enviar-formulario', isAuthenticated, (req, res) => {
   const { nombre_persona, nombre_solicitud, descripcion_solicitud, periodo_tiempo, mail_asociado, persona_encargada } = req.body;
 
-  // Verificar si todos los campos están presentes
   if (!nombre_persona || !nombre_solicitud || !descripcion_solicitud || !periodo_tiempo || !mail_asociado || !persona_encargada) {
     return res.status(400).json({ error: 'Todos los campos son obligatorios.' });
   }
 
-  // Insertar los datos en la base de datos
   const sql = `INSERT INTO solicitudes (nombre_persona, nombre_solicitud, descripcion_solicitud, periodo_tiempo, mail_asociado, persona_encargada) VALUES (?, ?, ?, ?, ?, ?)`;
   db.run(sql, [nombre_persona, nombre_solicitud, descripcion_solicitud, periodo_tiempo, mail_asociado, persona_encargada], function(err) {
     if (err) {
@@ -39,11 +64,29 @@ app.post('/enviar-formulario', (req, res) => {
 });
 
 
+// Endpoint para obtener la descripción de una solicitud
+// Endpoint para obtener la descripción de una solicitud específica
+app.get('/obtener-descripcion-solicitud/:id', (req, res) => {
+  const { id } = req.params;
+
+  // Consulta la base de datos para obtener la descripción de la solicitud con el ID especificado
+  const sql = `SELECT descripcion_solicitud FROM solicitudes WHERE id = ?`;
+  db.get(sql, [id], (err, row) => {
+    if (err) {
+      return res.status(500).json({ error: 'Error al obtener la descripción de la solicitud' });
+    }
+    if (!row) {
+      return res.status(404).json({ error: 'Solicitud no encontrada' });
+    }
+    res.json({ descripcion: row.descripcion_solicitud });
+  });
+});
+
 
 
 
 // Endpoint para obtener todas las solicitudes con filtros aplicados
-app.get('/solicitudes', (req, res) => {
+app.get('/solicitudes', isAuthenticated, isAdmin,isNotAdmin, (req, res) => {
   let sql = `SELECT * FROM solicitudes`;
   const params = [];
 
@@ -86,7 +129,7 @@ app.get('/solicitudes', (req, res) => {
 });
 
 // Endpoint para editar una solicitud existente
-app.put('/editar-solicitud/:id', (req, res) => {
+app.put('/editar-solicitud/:id', isAuthenticated, isAdmin, (req, res) => {
   const { id } = req.params;
   const { nuevaDescripcion } = req.body;
 
@@ -106,7 +149,7 @@ app.put('/editar-solicitud/:id', (req, res) => {
 });
 
 // Endpoint para cambiar el estado de una solicitud
-app.put('/toggle-finalizado/:id', (req, res) => {
+app.put('/toggle-finalizado/:id', isAuthenticated, isAdmin, (req, res) => {
   const { id } = req.params;
 
   // Verificar si el ID de la solicitud es válido
@@ -138,7 +181,7 @@ app.put('/toggle-finalizado/:id', (req, res) => {
 
 // Endpoint para cambiar la persona encargada de una solicitud
 // Ruta para cambiar la persona encargada de una solicitud
-app.put('/cambiar-persona-encargada/:id', (req, res) => {
+app.put('/cambiar-persona-encargada/:id', isAuthenticated, isAdmin, (req, res) => {
   const idSolicitud = req.params.id;
   const nuevaPersonaEncargada = req.body.nuevaPersonaEncargada;
 
@@ -160,7 +203,7 @@ app.put('/cambiar-persona-encargada/:id', (req, res) => {
 });
 
 
-app.get('/attentions', (req, res) => {
+app.get('/attentions', isAuthenticated, isAdmin, (req, res) => {
   const sql = 'SELECT persona_encargada, COUNT(*) as atenciones FROM solicitudes GROUP BY persona_encargada';
   db.all(sql, [], (err, rows) => {
       if (err) {
@@ -172,7 +215,7 @@ app.get('/attentions', (req, res) => {
   });
 });
 
-app.get('/requests', (req, res) => {
+app.get('/requests', isAuthenticated, isAdmin, (req, res) => {
   const sql = 'SELECT finalizado, COUNT(*) as solicitudes FROM solicitudes GROUP BY finalizado';
   db.all(sql, [], (err, rows) => {
       if (err) {
@@ -187,7 +230,7 @@ app.get('/requests', (req, res) => {
 
 
 // Endpoint para obtener solicitudes completadas
-app.get('/solicitudes-completadas', (req, res) => {
+app.get('/solicitudes-completadas', isAuthenticated, isAdmin, (req, res) => {
   const sql = `SELECT * FROM solicitudes WHERE finalizado = 2`;
 
   db.all(sql, [], (err, rows) => {
@@ -228,20 +271,18 @@ function saveSessionInDatabase(sessionId, userId) {
 }
 
 // Endpoint para obtener el nombre de usuario asociado a la sesión actual
-app.get('/username', (req, res) => {
+app.get('/username', isAuthenticated, (req, res) => {
   const sessionId = req.cookies.sessionId;
 
-  // Consultar la base de datos para obtener el nombre de usuario asociado al ID de sesión
   db.get("SELECT usuario FROM usuarios WHERE id = (SELECT id_usuario FROM sesiones WHERE id_sesion = ?)", [sessionId], (err, row) => {
     if (err) {
       return res.status(500).json({ error: 'Internal server error' });
     }
-    
+
     if (!row) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
-    
-    // Si se encuentra el nombre de usuario, devolverlo en la respuesta
+
     res.json({ username: row.usuario });
   });
 });
@@ -249,7 +290,6 @@ app.get('/username', (req, res) => {
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
 
-  // Verificar si el usuario existe en la base de datos
   const sql = 'SELECT * FROM usuarios WHERE usuario = ?';
   db.get(sql, [username], (err, user) => {
     if (err) {
@@ -260,20 +300,16 @@ app.post('/login', (req, res) => {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
-    // Comparar la contraseña proporcionada con la contraseña almacenada en la base de datos
     if (password === user.contraseña) {
-      // Generar un ID de sesión único
       const sessionId = generateSessionId();
-      // Guardar el ID de sesión en la base de datos
       saveSessionInDatabase(sessionId, user.id);
-      // Establecer una cookie con el ID de sesión
       res.cookie('sessionId', sessionId, { httpOnly: true });
+      req.session.user = { id: user.id, username: user.usuario, role: user.usuario === 'admin' ? 'admin' : 'user' };
 
-      // Redirigir según el rol del usuario
       if (user.usuario === 'admin') {
         res.json({ redirect: 'solicitudes.html' });
       } else {
-        res.json({ redirect: 'formulario.html' }); // Cambiar a la página que corresponda para otros usuarios
+        res.json({ redirect: 'formulario.html' });
       }
     } else {
       res.status(401).json({ error: 'Credenciales inválidas' });
