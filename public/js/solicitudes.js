@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <p class="card-text">${solicitud.descripcion_solicitud}</p>
                             <p class="card-text">Periodo: ${solicitud.periodo_tiempo}</p>
                             <p class="card-text">Mail asociado: ${solicitud.mail_asociado}</p>
-                            <p class="card-text">Persona encargada: <span id="persona-encargada-${solicitud.id}">${solicitud.persona_encargada}</span></p>
+                            <p class="card-text"><strong>Persona encargada: <span id="persona-encargada-${solicitud.id}">${solicitud.persona_encargada}</strong></span></p>
                             <p class="card-text">Fecha: ${solicitud.fecha}</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
@@ -80,13 +80,14 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </div>
                             </div>
                             <div class="mt-2">
-                                <label for="responsable-${solicitud.id}">Cambiar responsable:</label>
-                                <select id="responsable-${solicitud.id}" class="form-control">
-                                    <option value="Jeremias">Jeremias</option>
-                                    <option value="Nahuel M">Nahuel M</option>
-                                    <option value="Nahuel R">Nahuel R</option>
-                                    <option value="Jordi">Jordi</option>
-                                </select>
+                            <label for="responsable-${solicitud.id}">Cambiar responsable:</label>
+                            <select id="responsable-${solicitud.id}" class="form-control">
+                                <option value="" disabled selected>Seleccionar Responsable</option>
+                                <option value="Jeremias">Jeremias</option>
+                                <option value="Nahuel M">Nahuel M</option>
+                                <option value="Nahuel R">Nahuel R</option>
+                                <option value="Jordi">Jordi</option>
+                            </select>
                                 <button type="button" class="btn btn-sm btn-outline-secondary cambiar-responsable-btn mt-2" data-id="${solicitud.id}">
                                     Guardar
                                 </button>
